@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { saveToExcel } from '../services/excelService';
+import React, { useState, useEffect } from 'react';
+import { saveToExcel, getResultsCount, getResultsStats } from '../services/excelService';
 import { validatePlayerData } from '../utils/validation';
 
 function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
   const [playerData, setPlayerData] = useState({ name: '', email: '' });
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [recordsCount, setRecordsCount] = useState(0);
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    // Cargar información de registros existentes
+    const count = getResultsCount();
+    const statistics = getResultsStats();
+    setRecordsCount(count);
+    setStats(statistics);
+  }, []);
 
   const handleInputChange = (field, value) => {
     setPlayerData(prev => ({
@@ -40,14 +50,16 @@ function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
         'Respuestas Correctas': gameData.correctAnswers,
         'Respuestas Incorrectas': gameData.incorrectAnswers,
         'Porcentaje de Precisión': `${gameData.percentage}%`,
-        'Total de Preguntas': gameData.totalQuestions,
-        'Fecha y Hora': gameData.gameEndTime ? 
-          gameData.gameEndTime.toLocaleString('es-ES') : 
-          new Date().toLocaleString('es-ES')
+        'Total de Preguntas': gameData.totalQuestions
       };
 
-      await saveToExcel(completeData);
-      onSaveSuccess();
+      const result = await saveToExcel(completeData);
+      
+      // Mostrar mensaje de éxito con información del archivo
+      console.log(`Archivo guardado: ${result.filename}`);
+      console.log(`Total de registros: ${result.totalRecords}`);
+      
+      onSaveSuccess(result);
     } catch (error) {
       console.error('Error al guardar:', error);
       setFormErrors({ general: 'Error al guardar los datos. Intenta nuevamente.' });
@@ -60,6 +72,22 @@ function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
     <div className="player-form">
       <h3>💾 Guardar Resultados</h3>
       <p>Ingresa tus datos para guardar tu puntuación en un archivo Excel</p>
+      
+      {/* Información de registros existentes */}
+      {recordsCount > 0 && (
+        <div className="records-info">
+          <p>📊 Registros existentes: <strong>{recordsCount}</strong></p>
+          {stats && (
+            <div className="stats-preview">
+              <small>
+                Promedio: {stats.averageScore} pts ({stats.averageAccuracy}% precisión) | 
+                Mejor: {stats.bestScore} pts | 
+                Última partida: {stats.lastPlayedDate}
+              </small>
+            </div>
+          )}
+        </div>
+      )}
       
       {formErrors.general && (
         <div className="error-message general-error">
@@ -112,7 +140,7 @@ function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
             </>
           ) : (
             <>
-              💾 Guardar en Excel
+              💾 {recordsCount > 0 ? `Agregar al Excel (${recordsCount + 1})` : 'Guardar en Excel'}
             </>
           )}
         </button>

@@ -3,7 +3,7 @@ import Question from './Question';
 import Results from './Results';
 import PlayerForm from './PlayerForm';
 import ScoreBoard from './ScoreBoard'
-import { triviaQuestions } from '../data/questions';
+import { triviaQuestions } from '../utils/questions';
 
 function TriviaGame() {
     const [gameState, setGameState] = useState('start');

@@ -11,6 +11,7 @@ function Results({
 }) {
   const [showPlayerForm, setShowPlayerForm] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [saveResult, setSaveResult] = useState(null);
 
   const getScoreMessage = () => {
     const percentage = (correctAnswers / totalQuestions) * 100;
@@ -21,13 +22,14 @@ function Results({
     return "¡Sigue practicando! 💪";
   };
 
-  const handleSaveSuccess = () => {
+  const handleSaveSuccess = (result) => {
+    setSaveResult(result);
     setShowSuccessMessage(true);
     setShowPlayerForm(false);
     
     setTimeout(() => {
       setShowSuccessMessage(false);
-    }, 3000);
+    }, 5000);
   };
 
   const handleSkipSave = () => {
@@ -73,9 +75,15 @@ function Results({
         />
       )}
       
-      {showSuccessMessage && (
+      {showSuccessMessage && saveResult && (
         <div className="success-message">
-          ✅ ¡Resultados guardados exitosamente en el archivo Excel!
+          ✅ ¡Resultados guardados exitosamente!
+          <br />
+          <small>
+            Archivo: {saveResult.filename}
+            <br />
+            Total de registros: {saveResult.totalRecords}
+          </small>
         </div>
       )}
       
