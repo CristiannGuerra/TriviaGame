@@ -395,3 +395,188 @@ body {
         align-items: center;
     }
 }
+
+/* Agregar estos estilos al archivo App.css existente */
+
+/* Google Sheets Integration Styles */
+.loading-service {
+    text-align: center;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.service-unavailable {
+    text-align: center;
+    padding: 30px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 15px;
+    margin: 20px 0;
+    color: #856404;
+}
+
+.service-unavailable h3 {
+    color: #856404;
+    margin-bottom: 15px;
+}
+
+.records-info {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 4px solid #2196f3;
+}
+
+.stats-preview {
+    margin-top: 10px;
+}
+
+.stats-preview small {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.view-spreadsheet-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.view-spreadsheet-btn:hover {
+    background: #3367d6;
+}
+
+.general-error {
+    background: #ffebee;
+    border: 1px solid #e57373;
+    color: #c62828;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #4caf50, #81c784);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin: 20px 0;
+    animation: fadeIn 0.5s ease-in;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.success-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.success-details {
+    margin: 15px 0;
+}
+
+.success-details p {
+    margin: 8px 0;
+    font-size: 0.95em;
+}
+
+.success-actions {
+    margin-top: 15px;
+}
+
+.view-spreadsheet-button {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+}
+
+.view-spreadsheet-button:hover {
+    background: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+}
+
+.view-spreadsheet-button.secondary {
+    background: #6c757d;
+    margin-left: 15px;
+}
+
+.view-spreadsheet-button.secondary:hover {
+    background: #5a6268;
+}
+
+.final-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for Google Sheets elements */
+@media (max-width: 768px) {
+    .success-message {
+        padding: 20px;
+        margin: 15px 0;
+    }
+    
+    .success-header {
+        font-size: 1.1em;
+    }
+    
+    .final-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .view-spreadsheet-button {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .view-spreadsheet-button.secondary {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .records-info {
+        padding: 15px;
+    }
+    
+    .view-spreadsheet-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+    }
+}
