@@ -1,20 +1,10 @@
+import { config, validateConfig, getDateTimeConfig } from '../config/enviroment.config';
 import { validatePlayerData } from '../utils/validation';
-
-// Configuración de Google Sheets API
-const GOOGLE_SHEETS_CONFIG = {
-    // Reemplaza con tu API Key de Google
-    API_KEY: 'TU_API_KEY_AQUI',
-    // Reemplaza con el ID de tu Google Spreadsheet
-    SPREADSHEET_ID: 'TU_SPREADSHEET_ID_AQUI',
-    // Nombre de la hoja donde se guardarán los datos
-    SHEET_NAME: 'Resultados_Trivia',
-    // Rango donde se insertarán los datos
-    RANGE: 'A:I'
-};
 
 class GoogleSheetsService {
     constructor() {
-        this.baseUrl = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}`;
+        this.config = config.googleSheets;
+        this.baseUrl = `https://sheets.googleapis.com/v4/spreadsheets/${this.config.spreadsheetId}`;
         this.isInitialized = false;
     }
 
@@ -23,19 +13,16 @@ class GoogleSheetsService {
         if (this.isInitialized) return true;
 
         try {
-            // Verificar si la API Key está configurada
-            if (!GOOGLE_SHEETS_CONFIG.API_KEY || GOOGLE_SHEETS_CONFIG.API_KEY === 'TU_API_KEY_AQUI') {
-                throw new Error('API Key de Google no configurada');
-            }
-
-            // Verificar si el Spreadsheet ID está configurado
-            if (!GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID || GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID === 'TU_SPREADSHEET_ID_AQUI') {
-                throw new Error('Spreadsheet ID no configurado');
+            // Validar configuración
+            const validation = validateConfig();
+            if (!validation.isValid) {
+                throw new Error(`Configuración inválida: ${validation.errors.join(', ')}`);
             }
 
             // Verificar conexión con Google Sheets
             await this.getSheetData();
             this.isInitialized = true;
+            console.log('Google Sheets Service inicializado correctamente');
             return true;
         } catch (error) {
             console.error('Error inicializando Google Sheets:', error);
@@ -46,12 +33,13 @@ class GoogleSheetsService {
     // Obtener datos existentes de la hoja
     async getSheetData() {
         try {
-            const url = `${this.baseUrl}/values/${GOOGLE_SHEETS_CONFIG.SHEET_NAME}!${GOOGLE_SHEETS_CONFIG.RANGE}?key=${GOOGLE_SHEETS_CONFIG.API_KEY}`;
+            const url = `${this.baseUrl}/values/${this.config.sheetName}!${this.config.range}?key=${this.config.apiKey}`;
             
             const response = await fetch(url);
             
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`Error HTTP ${response.status}: ${errorText}`);
             }
 
             const data = await response.json();
@@ -68,7 +56,6 @@ class GoogleSheetsService {
             const data = await this.getSheetData();
             
             if (data.length === 0) {
-                // No hay datos, crear encabezados
                 const headers = [
                     'ID',
                     'Nombre',
@@ -82,10 +69,11 @@ class GoogleSheetsService {
                 ];
 
                 await this.appendRow(headers);
+                console.log('Encabezados creados en Google Sheets');
                 return true;
             }
 
-            return false; // Ya existen encabezados
+            return false;
         } catch (error) {
             console.error('Error creando encabezados:', error);
             throw error;
@@ -95,7 +83,7 @@ class GoogleSheetsService {
     // Agregar una fila a la hoja
     async appendRow(values) {
         try {
-            const url = `${this.baseUrl}/values/${GOOGLE_SHEETS_CONFIG.SHEET_NAME}!${GOOGLE_SHEETS_CONFIG.RANGE}:append?valueInputOption=USER_ENTERED&key=${GOOGLE_SHEETS_CONFIG.API_KEY}`;
+            const url = `${this.baseUrl}/values/${this.config.sheetName}!${this.config.range}:append?valueInputOption=USER_ENTERED&key=${this.config.apiKey}`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -108,7 +96,8 @@ class GoogleSheetsService {
             });
 
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`Error HTTP ${response.status}: ${errorText}`);
             }
 
             return await response.json();
@@ -124,14 +113,10 @@ class GoogleSheetsService {
             await this.initialize();
             await this.ensureHeaders();
 
-            const timestamp = new Date().toLocaleString('es-ES', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZone: 'America/Argentina/Buenos_Aires'
+            const dateTimeConfig = getDateTimeConfig();
+            const timestamp = new Date().toLocaleString(dateTimeConfig.locale, {
+                ...dateTimeConfig.format,
+                timeZone: dateTimeConfig.timezone
             });
 
             const rowData = [
@@ -152,11 +137,13 @@ class GoogleSheetsService {
             const allData = await this.getSheetData();
             const totalRecords = allData.length - 1; // Restar 1 por los encabezados
 
+            console.log(`Resultado guardado en Google Sheets. Total de registros: ${totalRecords}`);
+
             return {
                 success: true,
                 totalRecords,
                 updatedRange: result.updates?.updatedRange || '',
-                spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}`
+                spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${this.config.spreadsheetId}`
             };
         } catch (error) {
             console.error('Error guardando en Google Sheets:', error);
@@ -211,6 +198,7 @@ class GoogleSheetsService {
             await this.initialize();
             return true;
         } catch (error) {
+            console.error('Google Sheets Service no disponible:', error.message);
             return false;
         }
     }
@@ -272,13 +260,7 @@ export const isGoogleSheetsAvailable = async () => {
 };
 
 export const getSpreadsheetUrl = () => {
-    return `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}`;
-};
-
-// Configuración
-export const updateConfig = (newConfig) => {
-    Object.assign(GOOGLE_SHEETS_CONFIG, newConfig);
-    googleSheetsService.isInitialized = false;
+    return `https://docs.google.com/spreadsheets/d/${config.googleSheets.spreadsheetId}`;
 };
 
 export default googleSheetsService;
