@@ -5,12 +5,9 @@ export const connectDB = async () => {
     try {
         const conn = await mongoose.connect(ENVIRONMENT.MONGODB_URI, {
             // Opciones de conexión recomendadas
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000, // Timeout después de 5s en lugar de 30s
             socketTimeoutMS: 45000, // Cerrar sockets después de 45s de inactividad
             maxPoolSize: 10, // Mantener hasta 10 conexiones de socket
-            bufferMaxEntries: 0, // Deshabilitar mongoose buffering
             bufferCommands: false, // Deshabilitar mongoose buffering
         });
 

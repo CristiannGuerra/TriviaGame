@@ -11,19 +11,7 @@ const app = express();
 connectDB();
 
 // Middlewares
-app.use(cors({
-    origin: ENVIRONMENT.CORS_ORIGIN,
-    credentials: true
-}));
-
-// Middleware para obtener IP del cliente
-app.use((req, res, next) => {
-    req.clientIp = req.headers['x-forwarded-for'] || 
-                   req.connection.remoteAddress || 
-                   req.socket.remoteAddress ||
-                   (req.connection.socket ? req.connection.socket.remoteAddress : null);
-    next();
-});
+app.use(cors());
 
 // Usar JSON
 app.use(express.json({
@@ -58,23 +46,23 @@ app.get("/health", (req, res) => {
     });
 });
 
-// Middleware de manejo de errores
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: "Error interno del servidor",
-        error: ENVIRONMENT.NODE_ENV === 'development' ? err.message : 'Error interno'
-    });
-});
+// // Middleware de manejo de errores
+// app.use((err, req, res, next) => {
+//     console.error(err.stack);
+//     res.status(500).json({
+//         success: false,
+//         message: "Error interno del servidor",
+//         error: ENVIRONMENT.NODE_ENV === 'development' ? err.message : 'Error interno'
+//     });
+// });
 
-// Ruta 404
-app.use("*", (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Ruta no encontrada"
-    });
-});
+// // Ruta 404
+// app.use("*", (req, res) => {
+//     res.status(404).json({
+//         success: false,
+//         message: "Ruta no encontrada"
+//     });
+// });
 
 // Iniciar servidor
 app.listen(ENVIRONMENT.PORT, () => {
