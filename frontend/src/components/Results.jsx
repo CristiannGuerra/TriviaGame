@@ -28,20 +28,14 @@ function Results({
         setShowSuccessMessage(true);
         setShowPlayerForm(false);
         
-        // Mantener el mensaje más tiempo para Google Sheets
+        // Ocultar mensaje después de 5 segundos
         setTimeout(() => {
             setShowSuccessMessage(false);
-        }, 8000);
+        }, 5000);
     };
 
     const handleSkipSave = () => {
         setShowPlayerForm(false);
-    };
-
-    const handleViewSpreadsheet = () => {
-        if (saveResult?.spreadsheetUrl) {
-            window.open(saveResult.spreadsheetUrl, '_blank');
-        }
     };
 
     return (
@@ -86,22 +80,10 @@ function Results({
             {showSuccessMessage && saveResult && (
                 <div className="success-message">
                     <div className="success-header">
-                        ✅ ¡Resultados guardados en Google Sheets!
+                        ✅ ¡Resultados guardados exitosamente!
                     </div>
                     <div className="success-details">
-                        <p><strong>Total de registros:</strong> {saveResult.totalRecords}</p>
-                        <p><strong>Plataforma:</strong> {saveResult.platform}</p>
-                        {saveResult.updatedRange && (
-                            <p><strong>Rango actualizado:</strong> {saveResult.updatedRange}</p>
-                        )}
-                    </div>
-                    <div className="success-actions">
-                        <button 
-                            className="view-spreadsheet-button"
-                            onClick={handleViewSpreadsheet}
-                        >
-                            👁️ Ver en Google Sheets
-                        </button>
+                        <p>{saveResult.message}</p>
                     </div>
                 </div>
             )}
@@ -111,14 +93,6 @@ function Results({
                     <button className="play-again-button" onClick={onResetGame}>
                         🎮 Jugar de Nuevo
                     </button>
-                    {saveResult?.spreadsheetUrl && (
-                        <button 
-                            className="view-spreadsheet-button secondary"
-                            onClick={handleViewSpreadsheet}
-                        >
-                            📊 Ver Resultados Completos
-                        </button>
-                    )}
                 </div>
             )}
         </div>
