@@ -167,4 +167,4 @@ gameResultSchema.statics.getTopPlayers = async function(limit = 10) {
     ]);
 };
 
-module.exports = mongoose.model('GameResult', gameResultSchema);
+export default mongoose.model('GameResult', gameResultSchema);

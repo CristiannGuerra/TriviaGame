@@ -117,4 +117,4 @@ playerSchema.statics.findOrCreate = async function(playerData) {
     return player;
 };
 
-module.exports = mongoose.model('Player', playerSchema);
+export default mongoose.model('Player', playerSchema);
