@@ -8,7 +8,6 @@ export const connectDB = async () => {
             serverSelectionTimeoutMS: 5000, // Timeout después de 5s en lugar de 30s
             socketTimeoutMS: 45000, // Cerrar sockets después de 45s de inactividad
             maxPoolSize: 10, // Mantener hasta 10 conexiones de socket
-            bufferCommands: false, // Deshabilitar mongoose buffering
         });
 
         console.log(`MongoDB conectado: ${conn.connection.host}`);
