@@ -7,6 +7,7 @@ function Results({
     correctAnswers, 
     incorrectAnswers, 
     totalQuestions, 
+    gameStartTime,
     gameEndTime, 
     onResetGame 
 }) {
@@ -28,14 +29,26 @@ function Results({
         setShowSuccessMessage(true);
         setShowPlayerForm(false);
         
-        // Ocultar mensaje después de 5 segundos
+        // Ocultar mensaje después de 8 segundos
         setTimeout(() => {
             setShowSuccessMessage(false);
-        }, 5000);
+        }, 8000);
     };
 
     const handleSkipSave = () => {
         setShowPlayerForm(false);
+    };
+
+    const gameData = {
+        score,
+        correctAnswers,
+        incorrectAnswers,
+        totalQuestions,
+        gameStartTime,
+        gameEndTime,
+        accuracy: Math.round((correctAnswers / totalQuestions) * 100),
+        gameMode: 'normal',
+        difficulty: 'medium'
     };
 
     return (
@@ -64,14 +77,7 @@ function Results({
             
             {showPlayerForm && (
                 <PlayerForm
-                    gameData={{
-                        score,
-                        correctAnswers,
-                        incorrectAnswers,
-                        totalQuestions,
-                        gameEndTime,
-                        percentage: Math.round((correctAnswers / totalQuestions) * 100)
-                    }}
+                    gameData={gameData}
                     onSaveSuccess={handleSaveSuccess}
                     onSkipSave={handleSkipSave}
                 />
@@ -84,6 +90,13 @@ function Results({
                     </div>
                     <div className="success-details">
                         <p>{saveResult.message}</p>
+                        {saveResult.data && (
+                            <div className="player-stats">
+                                <p><strong>Juegos totales:</strong> {saveResult.data.playerStats?.totalGames}</p>
+                                <p><strong>Mejor puntuación:</strong> {saveResult.data.playerStats?.bestScore}</p>
+                                <p><strong>Promedio:</strong> {saveResult.data.playerStats?.averageScore}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

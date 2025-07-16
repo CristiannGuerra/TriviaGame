@@ -14,6 +14,7 @@ function TriviaGame() {
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [incorrectAnswers, setIncorrectAnswers] = useState(0);
     const [questions, setQuestions] = useState([]);
+    const [gameStartTime, setGameStartTime] = useState(null);
     const [gameEndTime, setGameEndTime] = useState(null);
 
     const startGame = () => {
@@ -25,6 +26,8 @@ function TriviaGame() {
         setScore(0);
         setCorrectAnswers(0);
         setIncorrectAnswers(0);
+        setGameStartTime(new Date());
+        setGameEndTime(null);
         setGameState('playing');
     };
 
@@ -54,13 +57,16 @@ function TriviaGame() {
             setSelectedOption(null);
             setShowAnswer(false);
         } else {
-            setGameEndTime(new Date());
+            const endTime = new Date();
+            setGameEndTime(endTime);
             setGameState('results');
         }
     };
 
     const resetGame = () => {
         setGameState('start');
+        setGameStartTime(null);
+        setGameEndTime(null);
     };
 
     return (
@@ -107,6 +113,7 @@ function TriviaGame() {
                         correctAnswers={correctAnswers}
                         incorrectAnswers={incorrectAnswers}
                         totalQuestions={questions.length}
+                        gameStartTime={gameStartTime}
                         gameEndTime={gameEndTime}
                         onResetGame={resetGame}
                     />

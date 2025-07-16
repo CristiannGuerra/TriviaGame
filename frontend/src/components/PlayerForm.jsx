@@ -1,6 +1,7 @@
 // frontend/src/components/PlayerForm.jsx
 import React, { useState } from 'react';
 import { validatePlayerData } from '../utils/validation';
+import { gameService } from '../services/api.services.js';
 
 function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
     const [playerData, setPlayerData] = useState({ name: '', email: '' });
@@ -33,23 +34,17 @@ function PlayerForm({ gameData, onSaveSuccess, onSkipSave }) {
         setIsLoading(true);
         
         try {
-            // TODO: Implementar guardado en backend
-            // const result = await saveToBackend(playerData, gameData);
-            
-            // Por ahora, simular guardado exitoso
-            console.log('Datos a guardar:', { playerData, gameData });
-            
-            // Simular delay de red
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await gameService.saveGameResult(playerData, gameData);
             
             onSaveSuccess({
                 success: true,
-                message: 'Datos guardados correctamente'
+                message: result.message || 'Datos guardados correctamente',
+                data: result.data
             });
         } catch (error) {
             console.error('Error al guardar:', error);
             setFormErrors({ 
-                general: 'Error al guardar los datos. Intenta nuevamente.' 
+                general: error.message || 'Error al guardar los datos. Intenta nuevamente.' 
             });
         } finally {
             setIsLoading(false);

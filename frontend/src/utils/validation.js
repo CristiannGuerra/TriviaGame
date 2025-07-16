@@ -1,42 +1,73 @@
-export const validatePlayerData = (data) => {
+export const validatePlayerData = (playerData) => {
     const errors = {};
+    let isValid = true;
 
-    // Validar nombre
-    if (!data.name || !data.name.trim()) {
+    // Validación del nombre
+    if (!playerData.name || playerData.name.trim().length === 0) {
         errors.name = 'El nombre es requerido';
-    } else if (data.name.trim().length < 2) {
+        isValid = false;
+    } else if (playerData.name.trim().length < 2) {
         errors.name = 'El nombre debe tener al menos 2 caracteres';
-    } else if (data.name.trim().length > 50) {
-        errors.name = 'El nombre no puede tener más de 50 caracteres';
-    } else if (!/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(data.name.trim())) {
-        errors.name = 'El nombre solo puede contener letras y espacios';
+        isValid = false;
+    } else if (playerData.name.trim().length > 50) {
+        errors.name = 'El nombre no puede exceder 50 caracteres';
+        isValid = false;
     }
 
-    // Validar email
-    if (!data.email || !data.email.trim()) {
+    // Validación del email
+    if (!playerData.email || playerData.email.trim().length === 0) {
         errors.email = 'El email es requerido';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-        errors.email = 'El email no tiene un formato válido';
-    } else if (data.email.trim().length > 100) {
-        errors.email = 'El email no puede tener más de 100 caracteres';
+        isValid = false;
+    } else if (playerData.email.trim().length > 100) {
+        errors.email = 'El email no puede exceder 100 caracteres';
+        isValid = false;
+    } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(playerData.email.trim())) {
+            errors.email = 'Por favor ingresa un email válido';
+            isValid = false;
+        }
     }
 
     return {
-        isValid: Object.keys(errors).length === 0,
+        isValid,
         errors
     };
 };
 
-export const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
+export const validateGameData = (gameData) => {
+    const errors = {};
+    let isValid = true;
 
-export const sanitizeInput = (input) => {
-    if (typeof input !== 'string') return input;
+    // Validación básica de datos del juego
+    if (!gameData.score || gameData.score < 0) {
+        errors.score = 'La puntuación debe ser mayor o igual a 0';
+        isValid = false;
+    }
 
-    return input
-        .trim()
-        .replace(/[<>]/g, '') // Remover caracteres HTML básicos
-        .substring(0, 100); // Limitar longitud
+    if (!gameData.totalQuestions || gameData.totalQuestions < 1) {
+        errors.totalQuestions = 'Debe haber al menos una pregunta';
+        isValid = false;
+    }
+
+    if (gameData.correctAnswers < 0) {
+        errors.correctAnswers = 'Las respuestas correctas no pueden ser negativas';
+        isValid = false;
+    }
+
+    if (gameData.incorrectAnswers < 0) {
+        errors.incorrectAnswers = 'Las respuestas incorrectas no pueden ser negativas';
+        isValid = false;
+    }
+
+    // Validar que las respuestas sumen el total
+    if (gameData.correctAnswers + gameData.incorrectAnswers !== gameData.totalQuestions) {
+        errors.answers = 'El total de respuestas no coincide con el número de preguntas';
+        isValid = false;
+    }
+
+    return {
+        isValid,
+        errors
+    };
 };
