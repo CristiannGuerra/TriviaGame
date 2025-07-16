@@ -40,11 +40,13 @@ const gameResultSchema = new mongoose.Schema({
     },
     gameEndTime: {
         type: Date,
-        required: [true, 'La hora de finalización es requerida']
+        required: [true, 'La hora de finalización es requerida'],
+        default: Date.now
     },
     gameDuration: {
         type: Number, // en segundos
-        required: true
+        required: true,
+        default: 0
     },
     // Información adicional
     gameMode: {
@@ -56,16 +58,17 @@ const gameResultSchema = new mongoose.Schema({
         type: String,
         enum: ['easy', 'medium', 'hard'],
         default: 'medium'
-    },
-    // Metadatos
-    userAgent: {
-        type: String,
-        default: ''
-    },
-    ipAddress: {
-        type: String,
-        default: ''
     }
+    // ,
+    // // Metadatos
+    // userAgent: {
+    //     type: String,
+    //     default: ''
+    // },
+    // ipAddress: {
+    //     type: String,
+    //     default: ''
+    // }
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
