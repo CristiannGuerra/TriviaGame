@@ -11,7 +11,17 @@ const app = express();
 connectDB();
 
 // Middlewares
-app.use(cors());
+// Configuración para permitir tu frontend específico
+const corsOptions = {
+  origin: `${ENVIRONMENT.URL_FRONTEND}`,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+// 3. Asegúrate de manejar solicitudes OPTIONS (preflight)
+app.options('*', cors(corsOptions)); // Habilita preflight para todas las rutas
+
 
 // Usar JSON
 app.use(express.json({
