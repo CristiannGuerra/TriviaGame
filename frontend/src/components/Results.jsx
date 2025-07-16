@@ -7,6 +7,7 @@ function Results({
     correctAnswers, 
     incorrectAnswers, 
     totalQuestions, 
+    difficulty,
     gameStartTime,
     gameEndTime, 
     onResetGame 
@@ -24,6 +25,15 @@ function Results({
         return "¡Sigue practicando! 💪";
     };
 
+    const getDifficultyDisplay = () => {
+        switch(difficulty) {
+            case 'easy': return { text: 'Fácil', icon: '🟢', color: 'green' };
+            case 'medium': return { text: 'Medio', icon: '🟡', color: 'yellow' };
+            case 'hard': return { text: 'Difícil', icon: '🔴', color: 'red' };
+            default: return { text: 'Normal', icon: '⚪', color: 'gray' };
+        }
+    };
+
     const handleSaveSuccess = (result) => {
         setSaveResult(result);
         setShowSuccessMessage(true);
@@ -39,6 +49,8 @@ function Results({
         setShowPlayerForm(false);
     };
 
+    const difficultyInfo = getDifficultyDisplay();
+
     const gameData = {
         score,
         correctAnswers,
@@ -48,12 +60,19 @@ function Results({
         gameEndTime,
         accuracy: Math.round((correctAnswers / totalQuestions) * 100),
         gameMode: 'normal',
-        difficulty: 'medium'
+        difficulty: difficulty
     };
 
     return (
         <div className="results-screen">
             <h2 className="results-title">¡Juego Terminado!</h2>
+            
+            <div className="difficulty-completed">
+                <span className={`difficulty-badge ${difficulty}`}>
+                    {difficultyInfo.icon} {difficultyInfo.text}
+                </span>
+            </div>
+            
             <div className="final-score">{getScoreMessage()}</div>
             
             <div className="score-breakdown">

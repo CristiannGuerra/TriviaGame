@@ -580,3 +580,55 @@ body {
         margin-top: 15px;
     }
 }
+
+/* Estilos para la selección de dificultad */
+.difficulty-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.difficulty-button {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.difficulty-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.difficulty-button.easy {
+    border-color: #4CAF50;
+}
+
+.difficulty-button.easy:hover {
+    border-color: #45a049;
+    background-color: #f8fff8;
+}
+
+.difficulty-button.medium {
+    border-color: #FF9800;
+}
+
+.difficulty-button.medium:hover {
+    border-color: #f57c00;
+    background-color: #fff8f0;
+}
